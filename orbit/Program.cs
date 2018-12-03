@@ -11,11 +11,14 @@ namespace orbit
      
         static void Main()
         {
-            Form form = new Form();
-            form.Width = 1200;
-            form.Height =800;
+            Form form = new Form
+            {
+                Width = Game.Width,
+                Height = Game.Height
+            }; 
             Game.Init(form);
             form.Show();
+            Game.Load(30);
             Game.Draw();
             Application.Run(form);
         }

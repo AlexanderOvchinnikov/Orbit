@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace orbit
 {
-    class DrawMyImage : BaseObject
-    {
+    class DrawMyImage
+    { 
+        /*
         private string way;
 
         /// <summary>
@@ -22,24 +23,21 @@ namespace orbit
             this.way = way;
         }
         
-        /// <summary>
-        /// Вставляет картинку
-        /// </summary>
-        public override void Draw()
+
+        public void Draw()
         {
             Bitmap file = new Bitmap(way);
-            Game.Buffer.Graphics.DrawImage(file,Pos.X,Pos.Y);
-            
+            Game.Buffer.Graphics.DrawImage(file, Pos.X, Pos.Y);
         }
 
         /// <summary>
         /// Смещает картинку
         /// </summary>
-        public override void Update()
+        public void Update()
         {
             Pos.X = Pos.X - Dir.X;
             if (Pos.X < 0) Pos.X = Game.Width + Size.Width;
-        }
+        }*/
     }
 
 

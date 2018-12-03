@@ -7,49 +7,65 @@ using System.Threading.Tasks;
 
 namespace orbit
 {
-    class BaseObject
+    public abstract class BaseObject : ICollision
     {
+   
         protected Point Pos; // Пара x,y для позиции
         protected Point Dir; // Пара x,y для смещения 
         protected Size Size; // Пара высота, ширина
 
         /// <summary>
-        /// Конструктор с указанием стартовой позии и смещения
+        /// Конструктор с указанием пар стартовой позии и смещения
         /// </summary>
         /// <param name="pos">Пара X и Y</param>
         /// <param name="dir">Смещение по X и Y</param>
-        public BaseObject(Point pos, Point dir)
+        protected BaseObject(Point pos, Point dir)
         {
             Pos = pos;
             Dir = dir;
         }
 
-        public BaseObject(Point pos, Point dir, Size size)
+        /// <summary>
+        /// Конструктор с указанием пар стартовой позии,смещения и размера
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="dir"></param>
+        /// <param name="size"></param>
+        protected BaseObject(Point pos, Point dir, Size size)
         {
             Pos = pos;
             Dir = dir;
             Size = size;
         }
 
+        public bool Collision(ICollision o) => o.Rect.IntersectsWith(Rect);
+
+        public Rectangle Rect => new Rectangle(Pos, Size);
+
+
+
         /// <summary>
-        /// Отрисовывает эллипс (цвет, позиция X, позиция Y, ширина, высота)
+        /// Отрисовывает объект(цвет)
         /// </summary>
-        public virtual void Draw()
-        {
-            Game.Buffer.Graphics.DrawEllipse(Pens.Red, Pos.X, Pos.Y, Size.Width, Size.Height);
-        }
+        /// <param name="color"></param>
+        public abstract void Draw(Color color);
+
 
         /// <summary>
         /// Смещает стартовые точки в пределах экрана
         /// </summary>
-        public virtual void Update()
+        public abstract void Update();
+
+        /// <summary>
+        /// Изменяет положение точки
+        /// </summary>
+        /// <param name="posX">позиция X</param>
+        /// <param name="posY">позиция Y</param>
+        public void UpdatePos(int posX, int posY)
         {
-            Pos.X = Pos.X + Dir.X;
-            Pos.Y = Pos.Y + Dir.Y;
-            if (Pos.X < 0) Dir.X = -Dir.X;
-            if (Pos.X > Game.Width) Dir.X = -Dir.X;
-            if (Pos.Y < 0) Dir.Y = -Dir.Y;
-            if (Pos.Y > Game.Height) Dir.Y = -Dir.Y;
+            Pos.X = posX;
+            Pos.Y = posY;
         }
+
     }
 }
