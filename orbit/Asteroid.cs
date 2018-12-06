@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace orbit
 {
-    class Asteroid : BaseObject, ICloneable
+    class Asteroid : BaseObject, ICloneable, IComparable<Asteroid>
+
     {
-        public int Power { get; set; }
+        public int Power { get; set; } = 3;
         /// <summary>
         /// Конструктор для астероидов
         /// </summary>
@@ -40,10 +41,20 @@ namespace orbit
             Game.Buffer.Graphics.FillEllipse(solidBrush, Pos.X, Pos.Y, Size.Width, Size.Height);
 
         }
-        /// <summary>
-        /// Изменяет положение астероида
-        /// </summary>
-        public override void Update()
+
+        int IComparable<Asteroid>.CompareTo(Asteroid obj)
+        {
+            if (Power > obj.Power) return 1;
+            else if (Power < obj.Power) return -1;
+            else return 0;
+        }
+
+    
+
+    /// <summary>
+    /// Изменяет положение астероида
+    /// </summary>
+    public override void Update()
         {
             Pos.X = Pos.X + Dir.X;
             Pos.Y = Pos.Y + Dir.Y;

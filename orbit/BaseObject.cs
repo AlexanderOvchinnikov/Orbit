@@ -14,6 +14,8 @@ namespace orbit
         protected Point Dir; // Пара x,y для смещения 
         protected Size Size; // Пара высота, ширина
 
+        public delegate void Message();
+
         /// <summary>
         /// Конструктор с указанием пар стартовой позии и смещения
         /// </summary>

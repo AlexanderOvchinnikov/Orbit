@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AidKit.cs" />
     <Compile Include="Asteroid.cs" />
     <Compile Include="BaseObject.cs" />
     <Compile Include="Bullet.cs" />
@@ -58,10 +59,12 @@
     </Compile>
     <Compile Include="Game.cs" />
     <Compile Include="ICollision.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="OrbitExceptions.cs" />
     <Compile Include="Planet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ship.cs" />
     <Compile Include="Star.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
