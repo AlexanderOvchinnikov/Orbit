@@ -20,6 +20,8 @@ namespace orbit
         /// Счетчик очков
         /// </summary>
         public static int score = 0;
+
+        public static int asterCount = 2;
         /// <summary>
         /// Ширина экрана
         /// </summary>
@@ -44,6 +46,8 @@ namespace orbit
         /// </summary>
         public static event Message onMes;
 
+
+
         static Game()
         {
 
@@ -51,11 +55,12 @@ namespace orbit
 
 
         private static BaseObject[] _objs;
-        
+
         //public static DrawMyImage dr = new DrawMyImage(new Point(500, 300), new Point(10, 1), @"moon.png");
         //public static DrawMyImage gal = new DrawMyImage(new Point(700, 50), new Point(4, 1), @"galaxy.png");
-        private static Bullet _bullet;
-        private static Asteroid[] _asteroids;
+        private static List<Bullet> _bullets = new List<Bullet>();
+        private static List <Asteroid> _asteroids = new List<Asteroid>();
+        //private static Asteroid[] _asteroids;
         public static Planet sun;
         public static AidKit kit;
 
@@ -69,10 +74,10 @@ namespace orbit
             //if ((Width > 1000) || (Width < 0)) throw new ArgumentOutOfRangeException();
             //if ((Height > 1000) || (Height < 0)) throw new ArgumentOutOfRangeException();
             if (count > 50) throw new OrbitException("Слишком много звезд");
+            _asteroids = LoadAster(asterCount);
 
-            
             sun = new Planet(new Point(Width, 200), new Point(5, 3), new Size(10, 10));
-            _bullet = new Bullet(new Point(0, 200), new Point(5, 0), new Size(3, 1));
+            //_bullet = new Bullet(new Point(0, 200), new Point(5, 0), new Size(3, 1));
             kit = new AidKit(new Point(100, 100), new Point(5, 5), new Size(6, 6));
 
             var rnd = new Random();
@@ -84,12 +89,9 @@ namespace orbit
                 _objs[i] = new Star(new Point(Game.Width, rnd.Next(0, Game.Height)), new Point(r, r), new Size(3, 3));
             }
 
-            _asteroids = new Asteroid[10];
-            for (var i = 0; i < _asteroids.Length; i++)
-            {
-                int r = rnd.Next(5, 50);
-                _asteroids[i] = new Asteroid(new Point(Game.Width, rnd.Next(0, Game.Height)), new Point(r / 5, r), new Size(r, r));
-            }
+            //_asteroids = new Asteroid[10];
+            
+
         }
         
         /// <summary>
@@ -98,25 +100,35 @@ namespace orbit
         public static void Update()
         {
             foreach (BaseObject obj in _objs) obj.Update();
-            _bullet?.Update();
-            for (var i = 0; i < _asteroids.Length; i++)
+            foreach (Bullet b in _bullets) b.Update();
+            foreach(Asteroid a in _asteroids) a.Update();
+           /* for (int tt = 0; tt < _asteroids.Count; tt++)
             {
-                if (_asteroids[i] == null) continue;
-                _asteroids[i].Update();
-                if (_bullet != null && _bullet.Collision(_asteroids[i]))
-                {
-                    System.Media.SystemSounds.Hand.Play();
-                    score++;
-                    _asteroids[i] = null;
-                    _bullet = null;
-                    continue;
-                }
-                if (!_ship.Collision(_asteroids[i])) continue;
+                for (int j = 0; j < _bullets.Count; j++)
+                    if (_asteroids[tt] != null && _bullets[j].Collision(_asteroids[tt]))
+                    {
+                        System.Media.SystemSounds.Hand.Play();
+                        _asteroids.RemoveAt(tt);
+                        _bullets.RemoveAt(j);
+                        j--;
+                        tt--;
+                        score++;
+                    }
+
+                if (_asteroids[tt] == null || !_ship.Collision(_asteroids[tt])) continue;
                 var rnd = new Random();
-                _ship?.EnergyLow(rnd.Next(1, 10));
+                _ship.EnergyLow(rnd.Next(1, 10));
                 System.Media.SystemSounds.Asterisk.Play();
-                if (_ship.Energy <= 0) _ship?.Die();
+            }*/
+
+            
+            if (_ship.Energy <= 0) _ship.Die();
+            if (_asteroids.Count == 0)
+            {
+               asterCount++;
+               _asteroids = LoadAster(asterCount);
             }
+          
 
             if (_ship.Collision(kit))
                 {
@@ -177,20 +189,18 @@ namespace orbit
             Log log = new Log();
             Game.onMes = log.Message;
             Game.onMes += log.MessageToFile;
-            if (e.KeyCode == Keys.ControlKey)
-            {
-                _bullet = new Bullet(new Point(_ship.Rect.X + 10, _ship.Rect.Y + 4), new Point(4, 0), new Size(4, 1));
-                onMes.Invoke("Нажата кнопка выстрела");
-            }
+            if (e.KeyCode == Keys.ControlKey) _bullets.Add(new Bullet(new Point(_ship.Rect.X + 10, _ship.Rect.Y + 4), new Point(4, 0), new Size(4, 1)));
+            //onMes.Invoke("Нажата кнопка выстрела");
+            
             if (e.KeyCode == Keys.Up)
             {
                 _ship.Up();
-                onMes.Invoke("Нажата кнопка вверх");
+            //    onMes.Invoke("Нажата кнопка вверх");
             }
             if (e.KeyCode == Keys.Down)
             {
                 _ship.Down();
-                onMes.Invoke("Нажата кнопка вниз");
+            //    onMes.Invoke("Нажата кнопка вниз");
             }
         }
 
@@ -203,13 +213,9 @@ namespace orbit
             Buffer.Graphics.Clear(Color.Black);
             sun.Draw(Color.Yellow);
             kit.Draw(Color.Green);
-            foreach (BaseObject obj in _objs)
-                obj.Draw(Color.White);
-            foreach (Asteroid a in _asteroids)
-            {
-                a?.Draw(Color.Brown);
-            }
-            _bullet?.Draw(Color.Red);
+            foreach (BaseObject obj in _objs) obj.Draw(Color.White);
+            foreach (Asteroid ass in _asteroids) ass?.Draw(Color.Brown);            
+            foreach (Bullet b in _bullets) b?.Draw(Color.Red);
             _ship?.Draw(Color.Blue);
             if (_ship != null)
                 Buffer.Graphics.DrawString("Energy:" + _ship.Energy, SystemFonts.DefaultFont, Brushes.White, 0, 0);
@@ -228,5 +234,17 @@ namespace orbit
             Buffer.Render();
         }
 
+        public static List<Asteroid> LoadAster(int asscount)
+        {
+            List<Asteroid> res = new List<Asteroid>();
+            for (var i = 0; i < asscount; i++)
+            {
+                var rnd = new Random();
+                int r = rnd.Next(5, 50);
+                
+                res.Add(new Asteroid(new Point(500, rnd.Next(0, 500)), new Point(r / 5, r), new Size(r, r)));
+            }
+            return res;
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace orbit
             }; 
             Game.Init(form);
             form.Show();
-            Game.Load(30);
+            Game.Load(1);
             Game.Draw();
             Application.Run(form);
         }
